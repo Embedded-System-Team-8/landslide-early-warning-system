@@ -65,6 +65,7 @@ void activateBuzzer(bool state) {
 // Returns calibrated Rain value (0-100%)
 float readRainSensor() {
   int rainValue = analogRead(RAIN_SENSOR);
+  Serial.println(rainValue);
   float calibratedValue = map(rainValue, 4095, 0, 0, 100);
   return calibratedValue / 100.0;
 }
@@ -76,6 +77,7 @@ const int WET_SOIL_VALUE = 0;      // Analog reading when soil is wet
 // Returns calibrated soil moisture value (0-100%)
 float readSoilMoistureSensor() {
   int soilMoistureValue = analogRead(SOIL_MOISTURE);
+  Serial.println(soilMoistureValue);
   float calibratedValue = map(soilMoistureValue, DRY_SOIL_VALUE, WET_SOIL_VALUE, 0, 100);
   calibratedValue = constrain(calibratedValue, 0, 100);
   return calibratedValue / 100.0;
@@ -114,7 +116,7 @@ void determineRiskLevel(float angleX, float angleY, float soilMoistureValue, flo
 }
 
 void sendDataToFirebase(sensors_event_t &a, sensors_event_t &g, sensors_event_t &temp, float angleX, float angleY, 
-                       int soilMoistureValue, float rainValue, String riskLevel, bool alertTrigger) {
+                       float soilMoistureValue, float rainValue, String riskLevel, bool alertTrigger) {
   if (!Firebase.ready()) return;
   
   String path = "/";
@@ -135,8 +137,8 @@ void sendDataToFirebase(sensors_event_t &a, sensors_event_t &g, sensors_event_t 
   gyroJson.set("z", round(g.gyro.z * 100) / 100.0);
   sensorsJson.set("gyro", gyroJson);
   
-  sensorsJson.set("soilMoisture", round(soilMoistureValue));
-  sensorsJson.set("rainfall", round(rainValue));
+  sensorsJson.set("soilMoisture", soilMoistureValue);
+  sensorsJson.set("rainfall", rainValue);
   sensorsJson.set("temperature", round(temp.temperature * 100) / 100.0);
   jsonData.set("sensors", sensorsJson);
   

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -87,6 +86,7 @@ const SensorChart = ({
               stroke={color}
               strokeWidth={2}
               dot={false}
+              isAnimationActive={false}
               activeDot={{
                 r: 4,
                 style: { fill: color, opacity: 0.8 },

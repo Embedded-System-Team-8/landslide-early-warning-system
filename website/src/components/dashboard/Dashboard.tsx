@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { CircleAlert, Thermometer, CloudRain, Gauge, MapPin, AlertTriangle } from "lucide-react"
 import StatusCard from "../sensors/StatusCard"
 import SensorChart from "../sensors/SensorChart"
@@ -6,26 +6,50 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Seismogram } from "../Seismogram"
+import { useSensorData } from "@/hooks/useSensorData"
 
-// Mock data for our dashboard charts
-const generateMockData = (length: number, base: number, volatility: number) => {
-    const now = new Date()
-    return Array.from({ length }, (_, i) => {
-        const time = new Date(now)
-        time.setHours(now.getHours() - (length - i))
-
-        const timeString = time.getHours().toString().padStart(2, "0") + ":00"
-        const value = base + (Math.random() - 0.5) * volatility
-
-        return { time: timeString, value }
-    })
+interface ChartDataPoint {
+    time: string
+    value: number
 }
 
-const soilMoistureData = generateMockData(24, 72, 10)
-const rainfallData = generateMockData(24, 15, 20)
-const temperatureData = generateMockData(24, 26, 4)
-
 const Dashboard: React.FC = () => {
+    const { sensorData, loading, error } = useSensorData()
+    const [soilMoistureHistory, setSoilMoistureHistory] = useState<ChartDataPoint[]>([])
+    const [rainfallHistory, setRainfallHistory] = useState<ChartDataPoint[]>([])
+    const [temperatureHistory, setTemperatureHistory] = useState<ChartDataPoint[]>([])
+
+    useEffect(() => {
+        if (sensorData) {
+            const now = new Date()
+            const timeString = now.toLocaleTimeString('id-ID', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false 
+            })
+
+            // Update soil moisture history
+            setSoilMoistureHistory(prev => {
+                const newData = [...prev, { time: timeString, value: sensorData.sensors.soilMoisture * 100 }]
+                return newData.slice(-24) // Keep last 24 data points
+            })
+
+            // Update rainfall history
+            setRainfallHistory(prev => {
+                const newData = [...prev, { time: timeString, value: sensorData.sensors.rainfall }]
+                return newData.slice(-24)
+            })
+
+            // Update temperature history
+            setTemperatureHistory(prev => {
+                const newData = [...prev, { time: timeString, value: sensorData.sensors.temperature }]
+                return newData.slice(-24)
+            })
+
+        }
+    }, [sensorData])
+
     return (
         <div className="p-4 space-y-6">
             <h1 className="text-lg font-semibold">Dashboard Monitoring</h1>
@@ -46,7 +70,9 @@ const Dashboard: React.FC = () => {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2">
-                            <p className="text-sm text-muted-foreground">Sistem berjalan normal</p>
+                            <p className="text-sm text-muted-foreground">
+                                {loading ? "Memuat data..." : error ? "Error: " + error : "Sistem berjalan normal"}
+                            </p>
                             <p className="text-sm text-muted-foreground">
                                 Terakhir diperbarui: {new Date().toLocaleString()}
                             </p>
@@ -88,22 +114,22 @@ const Dashboard: React.FC = () => {
                     <TabsContent value="24h" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <SensorChart
                             title="Kelembaban Tanah"
-                            description="Rata-rata dari semua sensor"
-                            data={soilMoistureData}
+                            description="Data realtime dari sensor"
+                            data={soilMoistureHistory}
                             color="hsl(215, 100%, 50%)"
                             unit="%"
                         />
                         <SensorChart
                             title="Curah Hujan"
-                            description="Total per jam"
-                            data={rainfallData}
+                            description="Data realtime dari sensor"
+                            data={rainfallHistory}
                             color="hsl(210, 90%, 65%)"
                             unit=" mm"
                         />
                         <SensorChart
                             title="Temperatur"
-                            description="Rata-rata dari semua sensor"
-                            data={temperatureData}
+                            description="Data realtime dari sensor"
+                            data={temperatureHistory}
                             color="hsl(20, 100%, 60%)"
                             unit="°C"
                         />
@@ -127,33 +153,33 @@ const Dashboard: React.FC = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <StatusCard
                     title="Kelembaban Tanah"
-                    value="72.5"
+                    value={sensorData?.sensors.soilMoisture * 100}
                     unit="%"
-                    change={8.2}
-                    status="warning"
+                    change={0}
+                    status={sensorData?.status.landslideRisk === "safe" ? "safe" : "warning"}
                     icon={<Gauge size={24} />}
                 />
                 <StatusCard
                     title="Curah Hujan"
-                    value="15.2"
+                    value={sensorData?.sensors.rainfall.toFixed(1) ?? "-"}
                     unit="mm"
-                    change={12.5}
-                    status="warning"
+                    change={0}
+                    status={sensorData?.status.landslideRisk === "safe" ? "safe" : "warning"}
                     icon={<CloudRain size={24} />}
                 />
                 <StatusCard
                     title="Temperatur"
-                    value="26.8"
+                    value={sensorData?.sensors.temperature.toFixed(1) ?? "-"}
                     unit="°C"
-                    change={-2.1}
+                    change={0}
                     status="safe"
                     icon={<Thermometer size={24} />}
                 />
                 <StatusCard
                     title="Risiko Longsor"
-                    value="Medium"
-                    change={5.3}
-                    status="warning"
+                    value={sensorData?.status.landslideRisk ?? "-"}
+                    change={0}
+                    status={sensorData?.status.landslideRisk === "safe" ? "safe" : "warning"}
                     icon={<AlertTriangle size={24} />}
                 />
             </div>
