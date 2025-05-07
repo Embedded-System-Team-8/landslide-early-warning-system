@@ -18,16 +18,16 @@ export const database = getDatabase(app)
 
 // Tipe data untuk sensor
 export interface SensorData {
-    timestamp: string
     sensors: {
         accelerometer: {
             x: number
             y: number
             z: number
         }
-        tilt: {
-            angleX: number
-            angleY: number
+        gyro: {
+            x: number
+            y: number
+            z: number
         }
         soilMoisture: number
         rainfall: number

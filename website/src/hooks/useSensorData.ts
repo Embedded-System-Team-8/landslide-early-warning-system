@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { ref, onValue } from "firebase/database"
 import { database, SensorData } from "../lib/firebase"
 
-export function useSensorData(deviceId: string) {
+export function useSensorData() {
     const [sensorData, setSensorData] = useState<SensorData | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -13,13 +13,12 @@ export function useSensorData(deviceId: string) {
         const unsubscribe = onValue(
             sensorRef,
             (snapshot) => {
-                let data = snapshot.val()
-                
+                const data = snapshot.val()
+
                 data.status = {
                     landslideRisk: "safe",
                     alertTriggered: false,
                 }
-                console.log(data)
 
                 if (data) {
                     setSensorData(data)
@@ -35,7 +34,7 @@ export function useSensorData(deviceId: string) {
         )
 
         return () => unsubscribe()
-    }, [deviceId])
+    }, [])
 
     return { sensorData, loading, error }
 }

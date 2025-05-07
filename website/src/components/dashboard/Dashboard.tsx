@@ -25,92 +25,22 @@ const soilMoistureData = generateMockData(24, 72, 10)
 const rainfallData = generateMockData(24, 15, 20)
 const temperatureData = generateMockData(24, 26, 4)
 
-// Mock data for sensors
-const sensors = [
-    {
-        id: "sensor-001",
-        name: "Desa Sukamaju",
-        status: "warning" as const,
-        soilMoisture: 72.5,
-        rainfall: 15.2,
-        temperature: 26.8,
-        accelerometer: {
-            x: -0.12,
-            y: 0.98,
-            z: 9.76,
-        },
-        tilt: {
-            angleX: 2.3,
-            angleY: 1.9,
-        },
-        location: {
-            lat: -5.123456,
-            lng: 105.123456,
-            village: "Desa Sukamaju",
-        },
-    },
-    {
-        id: "sensor-002",
-        name: "Desa Sejahtera",
-        status: "safe" as const,
-        soilMoisture: 65.2,
-        rainfall: 5.8,
-        temperature: 28.1,
-        accelerometer: {
-            x: -0.05,
-            y: 0.12,
-            z: 9.82,
-        },
-        tilt: {
-            angleX: 0.8,
-            angleY: 0.5,
-        },
-        location: {
-            lat: -5.223456,
-            lng: 105.223456,
-            village: "Desa Sejahtera",
-        },
-    },
-    {
-        id: "sensor-003",
-        name: "Desa Makmur",
-        status: "danger" as const,
-        soilMoisture: 85.1,
-        rainfall: 32.4,
-        temperature: 25.2,
-        accelerometer: {
-            x: -0.45,
-            y: 1.38,
-            z: 9.51,
-        },
-        tilt: {
-            angleX: 4.8,
-            angleY: 3.2,
-        },
-        location: {
-            lat: -5.323456,
-            lng: 105.323456,
-            village: "Desa Makmur",
-        },
-    },
-]
-
 const Dashboard: React.FC = () => {
     return (
         <div className="p-4 space-y-6">
-            <h1 className="text-2xl font-bold">Dashboard Monitoring</h1>
+            <h1 className="text-lg font-semibold">Dashboard Monitoring</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Sensor Utama</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Seismogram deviceId="sensor-001" />
+            <div className="flex flex-col gap-4 w-full">
+                <Card className="w-full">
+                    <CardContent className="p-2">
+                        <Seismogram />
                     </CardContent>
                 </Card>
+            </div>
 
-                <Card>
+            {/* Alert Summary */}
+            <div className="flex flex-col md:flex-row gap-4">
+                <Card className="w-full">
                     <CardHeader>
                         <CardTitle>Status Sistem</CardTitle>
                     </CardHeader>
@@ -124,22 +54,7 @@ const Dashboard: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Informasi Penting</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-2">
-                            <p className="text-sm text-muted-foreground">Pastikan semua sensor terhubung dengan baik</p>
-                            <p className="text-sm text-muted-foreground">Periksa koneksi internet secara berkala</p>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Alert Summary */}
-            <div className="flex flex-col md:flex-row gap-4">
-                <Card className="flex-1 border-status-warning border-l-4">
+                <Card className="w-full border-status-warning border-l-4">
                     <CardHeader>
                         <CardTitle className="flex items-center text-status-warning">
                             <AlertTriangle className="mr-2 h-5 w-5" />
@@ -155,82 +70,11 @@ const Dashboard: React.FC = () => {
                         </Button>
                     </CardFooter>
                 </Card>
-
-                <Card className="flex-1">
-                    <CardHeader>
-                        <CardTitle className="flex items-center">
-                            <MapPin className="mr-2 h-5 w-5" />
-                            Lokasi Sensor
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p>Total 3 sensor aktif dari 5 lokasi</p>
-                    </CardContent>
-                    <CardFooter>
-                        <Button variant="outline" size="sm">
-                            Lihat Peta
-                        </Button>
-                    </CardFooter>
-                </Card>
-            </div>
-
-            {/* Sensor Status Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {sensors.map((sensor) => (
-                    <Card
-                        key={sensor.id}
-                        className={`border-l-4 ${
-                            sensor.status === "safe"
-                                ? "border-status-safe"
-                                : sensor.status === "warning"
-                                ? "border-status-warning"
-                                : "border-status-danger"
-                        }`}
-                    >
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                {sensor.name}
-                                <div
-                                    className={`status-indicator ${
-                                        sensor.status === "safe"
-                                            ? "status-safe"
-                                            : sensor.status === "warning"
-                                            ? "status-warning"
-                                            : "status-danger"
-                                    }`}
-                                ></div>
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="grid grid-cols-2 gap-4 py-2">
-                            <div className="flex flex-col">
-                                <span className="text-sm text-muted-foreground">Kelembaban Tanah</span>
-                                <span className="text-lg font-semibold">{sensor.soilMoisture}%</span>
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-sm text-muted-foreground">Curah Hujan</span>
-                                <span className="text-lg font-semibold">{sensor.rainfall} mm</span>
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-sm text-muted-foreground">Kemiringan X</span>
-                                <span className="text-lg font-semibold">{sensor.tilt.angleX}°</span>
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-sm text-muted-foreground">Kemiringan Y</span>
-                                <span className="text-lg font-semibold">{sensor.tilt.angleY}°</span>
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button variant="outline" size="sm" className="w-full">
-                                Lihat Detail
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                ))}
             </div>
 
             {/* Chart Section */}
             <div>
-                <h2 className="text-xl font-semibold mb-4">Tren Data Sensor</h2>
+                <h2 className="text-xl font-semibold mb-4">Riwayat Data Sensor</h2>
 
                 <Tabs defaultValue="24h">
                     <div className="flex justify-between items-center mb-4">
