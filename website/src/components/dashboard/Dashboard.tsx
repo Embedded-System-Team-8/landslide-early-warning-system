@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
 
             // Update rainfall history
             setRainfallHistory((prev) => {
-                const newData = [...prev, { time: timeString, value: sensorData.sensors.rainfall }]
+                const newData = [...prev, { time: timeString, value: sensorData.sensors.rainfall * 100 }]
                 return newData.slice(-24)
             })
 
