@@ -116,13 +116,15 @@ const Dashboard: React.FC = () => {
                             data={soilMoistureHistory}
                             color="hsl(215, 100%, 50%)"
                             unit="%"
+                            domain={[0, 100]}
                         />
                         <SensorChart
                             title="Curah Hujan"
                             description="Data realtime dari sensor"
                             data={rainfallHistory}
                             color="hsl(210, 90%, 65%)"
-                            unit=" mm"
+                            unit=" %"
+                            domain={[0, 100]}
                         />
                         <SensorChart
                             title="Temperatur"
@@ -130,6 +132,7 @@ const Dashboard: React.FC = () => {
                             data={temperatureHistory}
                             color="hsl(20, 100%, 60%)"
                             unit="°C"
+                            domain={[0, 60]}
                         />
                     </TabsContent>
 

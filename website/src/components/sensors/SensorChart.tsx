@@ -14,6 +14,7 @@ type SensorChartProps = {
     dataKey?: string
     color?: string
     unit?: string
+    domain?: [number, number]
 }
 
 const SensorChart = ({
@@ -23,6 +24,7 @@ const SensorChart = ({
     dataKey = "value",
     color = "hsl(var(--primary))",
     unit = "",
+    domain = [0, 100],
 }: SensorChartProps) => {
     return (
         <Card className="h-full">
@@ -48,6 +50,7 @@ const SensorChart = ({
                                 tickMargin={10}
                                 tick={{ fontSize: 12 }}
                                 tickFormatter={(value) => `${value}${unit}`}
+                                domain={domain}
                             />
                             <Tooltip
                                 content={({ active, payload }) => {
