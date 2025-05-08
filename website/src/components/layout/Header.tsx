@@ -1,5 +1,5 @@
 import React from "react"
-import { Bell, Search, UserRound } from "lucide-react"
+import { Bell, Search, UserRound, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -12,10 +12,23 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
-const Header = () => {
+// Add prop type for onMenuClick
+type HeaderProps = {
+    onMenuClick?: () => void
+}
+
+const Header = ({ onMenuClick }: HeaderProps) => {
     return (
         <header className="h-16 border-b border-border flex items-center justify-between px-6">
-            <div className="md:hidden">
+            <div className="flex items-center md:hidden gap-2">
+                {/* Mobile menu button */}
+                <button
+                    className="mr-2 p-2 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary"
+                    onClick={onMenuClick}
+                    aria-label="Buka menu"
+                >
+                    <Menu size={24} />
+                </button>
                 {/* Mobile logo */}
                 <span className="font-bold text-primary">LEW System</span>
             </div>
@@ -27,7 +40,8 @@ const Header = () => {
                 </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            {/* Notification and user menu: hidden on mobile, flex on md+ */}
+            <div className="hidden md:flex items-center space-x-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="relative">
@@ -75,7 +89,7 @@ const Header = () => {
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="relative" size="sm">
                             <Avatar className="h-8 w-8">
-                              <UserRound />
+                                <UserRound />
                             </Avatar>
                         </Button>
                     </DropdownMenuTrigger>
