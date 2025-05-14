@@ -9,8 +9,8 @@
 #define RAIN_SENSOR 35
 #define SERVO_PIN_1 26
 #define SERVO_PIN_2 27  // Second servo pin
-#define SOIL_MOISTURE 34
-#define BUZZER_PIN 25
+#define SOIL_MOISTURE 33
+#define BUZZER_PIN 18
 #define LCD_ADDR 0x27  // I2C address for most common LCD modules
 #define LCD_COLS 16
 #define LCD_ROWS 2
@@ -310,8 +310,8 @@ void determineRiskLevel(float angleX, float angleY, float soilMoistureValue, flo
     lcd.setCursor(0, 1);
     lcd.print("tanah waspada");
     
-    servo1.write(90);  // Servo1 at 90 degrees for warning
-    servo2.write(90);  // Servo2 at 90 degrees for warning
+    servo1.write(0);  
+    servo2.write(0);  
     activateBuzzer(false);
   }
   // Danger/Awas condition
