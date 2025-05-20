@@ -1,0 +1,117 @@
+#include "telegram_module.h"
+#include <Arduino.h>
+#include <WiFiClientSecure.h>
+#include <UniversalTelegramBot.h>
+#include "sensors.h"
+
+const char* botToken = "AAGrbQrstVZaAMD9i1BXcOTFyAr9K_HRwuE"; // ganti dengan token bot kamu
+const char* chatId = "1388016195"; // ganti dengan chat ID kamu
+
+WiFiClientSecure secured_client;
+UniversalTelegramBot bot(botToken, secured_client);
+
+// Timer untuk polling
+unsigned long lastTimeBotRan;
+const unsigned long botInterval = 2000; // 2 detik
+
+bool isSubscribed = false;
+unsigned long lastSubscriptionSent = 0;
+const unsigned long subscriptionInterval = 5000; // 5 seconds
+String subscribedChatId = "";
+
+void setupTelegram() {
+  secured_client.setInsecure(); // Hanya untuk pengujian, sebaiknya gunakan sertifikat yang valid
+  lastTimeBotRan = millis();
+}
+
+void checkNewMessages() {
+  if (millis() - lastTimeBotRan > botInterval) {
+    int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    while (numNewMessages) {
+      replyNewMessages(numNewMessages);
+      numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    }
+    lastTimeBotRan = millis();
+  }
+}
+
+String getFormattedSensorData() {
+    float rainValue, soilMoistureValue;
+    sensors_event_t a, g, temp;
+
+    String data = "Rain: " + String(rainValue, 2) + "%\n";
+    data += "Soil Moisture: " + String(soilMoistureValue, 2) + "%\n";
+    data += "Accel X: " + String(a.acceleration.x, 2) + " m/s^2\n";
+    data += "Accel Y: " + String(a.acceleration.y, 2) + " m/s^2\n";
+    data += "Accel Z: " + String(a.acceleration.z, 2) + " m/s^2\n";
+    data += "Gyro X: " + String(g.gyro.x, 2) + " rad/s\n";
+    data += "Gyro Y: " + String(g.gyro.y, 2) + " rad/s\n";
+    data += "Gyro Z: " + String(g.gyro.z, 2) + " rad/s\n";
+    data += "Temperature: " + String(temp.temperature, 2) + " C\n";
+    return data;
+}
+
+void handleSubscriptionCommands(const String& chat_id, const String& text) {
+    if (text == "/subscribe") {
+        isSubscribed = true;
+        subscribedChatId = chat_id;
+        bot.sendMessage(chat_id, "Berhasil berlangganan status sensor setiap 5 detik.", "");
+    } else if (text == "/unsubscribe") {
+        isSubscribed = false;
+        subscribedChatId = "";
+        bot.sendMessage(chat_id, "Berhenti berlangganan status sensor.", "");
+    }
+}
+
+void sendSubscriptionStatusIfNeeded() {
+    if (isSubscribed && (millis() - lastSubscriptionSent > subscriptionInterval)) {
+        String data = getFormattedSensorData();
+        bot.sendMessage(subscribedChatId, "[Langganan] Status sensor:\n" + data, "");
+        lastSubscriptionSent = millis();
+    }
+}
+
+void replyNewMessages(int numNewMessages) {
+  for (int i = 0; i < numNewMessages; i++) {
+    String chat_id = bot.messages[i].chat_id;
+    String text = bot.messages[i].text;
+    String from_name = bot.messages[i].from_name;
+
+    if (text == "/start") {
+      String welcome = "Halo " + from_name + ",\n";
+      welcome += "Selamat datang di Bot Sistem Peringatan Dini Longsor\n";
+      welcome += "/help: melihat perintah yang tersedia";
+      bot.sendMessage(chat_id, welcome, "");
+    }
+    else if (text == "/help") {
+      String helpMsg = "";
+      helpMsg += "/start - Memulai Bot\n";
+      helpMsg += "/status - Menampilkan status terkini dari semua sensor\n";
+      helpMsg += "/alert - Menampilkan log peringatan terakhir\n";
+      helpMsg += "/subscribe /unsubscribe - Terima notifikasi setiap 5 detik\n";
+      helpMsg += "/thresholds - Menampilkan ambang batas bahaya saat ini";
+      bot.sendMessage(chat_id, helpMsg, "");
+    }
+    
+    else if (text == "/status") {
+      bot.sendMessage(chat_id, "Status semua sensor: [data sensor terkini]", "");
+    }
+    else if (text == "/alert") {
+      bot.sendMessage(chat_id, "Log peringatan terakhir: [log alert]", "");
+    }
+    else if (text == "/subscribe") {
+      bot.sendMessage(chat_id, "Berlangganan status sensor setiap 5 detik. /unsubscribe untuk berhenti.", "");
+      handleSubscriptionCommands(chat_id, text);
+    }
+    else if (text == "/unsubscribe") {
+      bot.sendMessage(chat_id, "Berhenti berlangganan status sensor.", "");
+      handleSubscriptionCommands(chat_id, text);
+    }
+    else if (text == "/thresholds") {
+      bot.sendMessage(chat_id, "Ambang batas bahaya saat ini: [data thresholds]", "");
+    }
+    else {
+      bot.sendMessage(chat_id, "Tidak dapat menemukan perintah. Ketik /help untuk bantuan.", "");
+    }
+  }
+}
