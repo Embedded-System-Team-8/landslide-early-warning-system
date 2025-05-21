@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { CircleAlert, Thermometer, CloudRain, Gauge, MapPin, AlertTriangle } from "lucide-react"
-import StatusCard from "../sensors/StatusCard"
+import StatusCard, { StatusType } from "../sensors/StatusCard"
 import SensorChart from "../sensors/SensorChart"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -102,9 +102,9 @@ const Dashboard: React.FC = () => {
                         />
                         <StatusCard
                             title="Risiko Longsor"
-                            value={sensorData?.status.landslideRisk ?? "-"}
+                            value={sensorData?.status.landslideRisk ?? " - "}
                             change={0}
-                            status={sensorData?.status.landslideRisk === "safe" ? "safe" : "warning"}
+                            status={sensorData?.status.landslideRisk as StatusType}
                             icon={<AlertTriangle size={24} />}
                         />
                     </div>

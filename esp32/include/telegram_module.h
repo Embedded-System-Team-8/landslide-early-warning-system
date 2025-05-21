@@ -2,6 +2,11 @@
 #pragma once
 
 void setupTelegram();
-void checkNewMessages();
-void replyNewMessages(int numNewMessages);
+void sendSubscriptionStatusIfNeeded();
 String getFormattedSensorData();
+void handleSubscriptionCommands(const String& chat_id, const String& text);
+void checkNewMessages(
+  String *riskLevelz, 
+  const bool alertTriggerz
+);
+void replyNewMessages(int numNewMessages);

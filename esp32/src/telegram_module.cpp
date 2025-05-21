@@ -4,7 +4,7 @@
 #include <UniversalTelegramBot.h>
 #include "sensors.h"
 
-const char* botToken = "AAGrbQrstVZaAMD9i1BXcOTFyAr9K_HRwuE"; // ganti dengan token bot kamu
+const char* botToken = "7904979023:AAGrbQrstVZaAMD9i1BXcOTFyAr9K_HRwuE"; // ganti dengan token bot kamu
 const char* chatId = "1388016195"; // ganti dengan chat ID kamu
 
 WiFiClientSecure secured_client;
@@ -19,15 +19,34 @@ unsigned long lastSubscriptionSent = 0;
 const unsigned long subscriptionInterval = 5000; // 5 seconds
 String subscribedChatId = "";
 
+String* riskLevel = nullptr;
+bool alertTrigger = false;
+
 void setupTelegram() {
-  secured_client.setInsecure(); // Hanya untuk pengujian, sebaiknya gunakan sertifikat yang valid
+  Serial.println("Initializing Telegram Bot...");
+  // secured_client.setCACert(TELEGRAM_CERTIFICATE_ROOT);
+  secured_client.setInsecure(); // Use this for testing, not recommended for production
   lastTimeBotRan = millis();
+  Serial.println("Telegram Bot initialized.");
 }
 
-void checkNewMessages() {
+void checkNewMessages(
+  String *riskLevelz, 
+  const bool alertTriggerz
+) {
+  if (riskLevelz == nullptr) {
+    Serial.println("Risk level pointer is null.");
+    return;
+  }
+
   if (millis() - lastTimeBotRan > botInterval) {
+    Serial.println("Checking for new Telegram messages...");
+    riskLevel = riskLevelz;
+    alertTrigger = alertTriggerz;
+
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
     while (numNewMessages) {
+      Serial.println("New message received.");
       replyNewMessages(numNewMessages);
       numNewMessages = bot.getUpdates(bot.last_message_received + 1);
     }
@@ -39,7 +58,24 @@ String getFormattedSensorData() {
     float rainValue, soilMoistureValue;
     sensors_event_t a, g, temp;
 
-    String data = "Rain: " + String(rainValue, 2) + "%\n";
+    readAllSensorsData(rainValue, soilMoistureValue, a, g, temp);
+    
+    String header = "";
+
+    if (*riskLevel == "safe") {
+      header = "✅ Tanah Aman";
+    } else if (*riskLevel == "warning") {
+      header = "⚠ Peringatan: Tanah Berpotensi Longsor (Tanah Waspada)";
+    } else if (*riskLevel == "danger") {
+      header = "⛔ BAHAYA: Tanah Longsor Terjadi (TANAH AWAS)";
+    } else {
+      header = "Status Tidak Dikenal";
+    }
+
+    String data = header + "\n";
+    data += "Peringatan: " + String(alertTrigger ? "Aktif" : "Tidak Aktif") + "\n";
+    data += "________________\n";
+    data +="Rain: " + String(rainValue, 2) + "%\n";
     data += "Soil Moisture: " + String(soilMoistureValue, 2) + "%\n";
     data += "Accel X: " + String(a.acceleration.x, 2) + " m/s^2\n";
     data += "Accel Y: " + String(a.acceleration.y, 2) + " m/s^2\n";
@@ -48,6 +84,8 @@ String getFormattedSensorData() {
     data += "Gyro Y: " + String(g.gyro.y, 2) + " rad/s\n";
     data += "Gyro Z: " + String(g.gyro.z, 2) + " rad/s\n";
     data += "Temperature: " + String(temp.temperature, 2) + " C\n";
+    data += "________________\n";
+    data += "Silahkan cek dashboard lengkap di https://landslide-early-warning-system.vercel.app/ 👈";
     return data;
 }
 
@@ -77,6 +115,13 @@ void replyNewMessages(int numNewMessages) {
     String text = bot.messages[i].text;
     String from_name = bot.messages[i].from_name;
 
+    Serial.print("Message from: ");
+    Serial.print(from_name);
+    Serial.print(" (");
+    Serial.print(chat_id);
+    Serial.print("): ");
+    Serial.println(text);
+
     if (text == "/start") {
       String welcome = "Halo " + from_name + ",\n";
       welcome += "Selamat datang di Bot Sistem Peringatan Dini Longsor\n";
@@ -94,10 +139,7 @@ void replyNewMessages(int numNewMessages) {
     }
     
     else if (text == "/status") {
-      bot.sendMessage(chat_id, "Status semua sensor: [data sensor terkini]", "");
-    }
-    else if (text == "/alert") {
-      bot.sendMessage(chat_id, "Log peringatan terakhir: [log alert]", "");
+      bot.sendMessage(chat_id, getFormattedSensorData(), "");
     }
     else if (text == "/subscribe") {
       bot.sendMessage(chat_id, "Berlangganan status sensor setiap 5 detik. /unsubscribe untuk berhenti.", "");

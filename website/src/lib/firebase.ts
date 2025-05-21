@@ -29,9 +29,15 @@ export interface SensorData {
             y: number
             z: number
         }
+        tilt: {
+            x: number
+            y: number
+            z: number
+        }
         soilMoisture: number
         rainfall: number
         temperature: number
+        vibrationRMS: number
     }
     status: {
         landslideRisk: string

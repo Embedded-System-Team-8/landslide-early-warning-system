@@ -4,7 +4,7 @@ import { ArrowUp, ArrowDown } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-type StatusType = 'safe' | 'warning' | 'danger';
+export type StatusType = 'safe' | 'warning' | 'danger';
 
 type StatusCardProps = {
   title: string;

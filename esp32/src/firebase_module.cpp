@@ -14,7 +14,8 @@ void setupFirebase() {
   Firebase.reconnectWiFi(true);
 }
 
-void sendDataToFirebase(sensors_event_t &a, sensors_event_t &g, sensors_event_t &temp, float &angleX, float angleY, float soilMoistureValue, float rainValue, String riskLevel, bool alertTrigger) {
+void sendDataToFirebase(
+  sensors_event_t &a, sensors_event_t &g, sensors_event_t &temp, float angleX, float angleY, float soilMoistureValue, float rainValue, String riskLevel, bool alertTrigger) {
   if (!Firebase.ready()) return;
   String path = "/";
   FirebaseJson jsonData;

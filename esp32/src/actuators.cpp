@@ -64,7 +64,7 @@ void writeServo1(int angle) {
 
 void writeServo2(int angle) {
   if (angle >= 0 && angle <= 180) {
-    servo2.write(angle);
+    servo2.write(90 - angle);
   } else {
     Serial.println("Error: Angle out of range for Servo 2");
   }

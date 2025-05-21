@@ -1,0 +1,3 @@
+firebase-admin>=6.2.0
+python-telegram-bot==13.7  # Using older version for compatibility with current code
+python-dotenv>=1.0.0

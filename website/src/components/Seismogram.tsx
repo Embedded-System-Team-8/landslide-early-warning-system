@@ -2,11 +2,6 @@ import React, { useState, useEffect, useRef } from "react"
 import { useSensorData } from "../hooks/useSensorData"
 import { SensorData } from "../lib/firebase"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
-import { Gyro3D } from "./Gyro3D"
-
-// export interface SeismogramProps {
-
-// }
 
 interface ChartData {
     time: string
@@ -16,7 +11,7 @@ interface ChartData {
     z: number
 }
 
-export const Seismogram: React.FC /*<SeismogramProps>*/ = () => {
+export const Seismogram: React.FC = () => {
     const { sensorData, loading, error } = useSensorData()
     const [chartData, setChartData] = useState<ChartData[]>([])
     const [domain, setDomain] = useState<[number, number]>([0, 0])
@@ -56,16 +51,11 @@ export const Seismogram: React.FC /*<SeismogramProps>*/ = () => {
 
             setChartData((prevData) => {
                 let updatedData = [...prevData, newDataPoint]
-
-                // Simpan maksimal 100 data point
                 updatedData = updatedData.slice(-100)
 
-                // Update the domain for the moving window effect
                 if (updatedData.length > 0) {
                     const oldest = updatedData[0].timestamp
                     const newest = updatedData[updatedData.length - 1].timestamp
-
-                    // Set the domain to show the time range of visible data points
                     setDomain([oldest, newest])
                 }
 
@@ -238,12 +228,11 @@ export const Seismogram: React.FC /*<SeismogramProps>*/ = () => {
                     <p>Y: {sensorData.sensors.gyro.y.toFixed(2)} rad/s</p>
                     <p>Z: {sensorData.sensors.gyro.z.toFixed(2)} rad/s</p>
                 </div>
-            </div>
-
-            <div className="gap-4 text-center w-full max-w-xs sm:max-w-md md:max-w-lg mx-auto">
-                <h2 className="font-semibold text-lg ">Device Rotation</h2>
-                <div className="rounded-lg overflow-clip shadow-lg w-full aspect-square">
-                    <Gyro3D />
+                <div className="flex-1 w-full md:w-64 p-4 border rounded">
+                    <h3 className="font-semibold mb-2">Tilt</h3>
+                    <p>X: {sensorData.sensors.tilt.x.toFixed(2)} deg/s</p>
+                    <p>Y: {sensorData.sensors.tilt.y.toFixed(2)} deg/s</p>
+                    <p>Z: {sensorData.sensors.tilt.z.toFixed(2)} deg/s</p>
                 </div>
             </div>
         </div>

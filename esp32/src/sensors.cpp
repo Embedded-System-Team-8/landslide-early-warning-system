@@ -101,7 +101,7 @@ void readMPU6050Data(sensors_event_t &a, sensors_event_t &g, sensors_event_t &te
       sumOfSquares += vibrationBuffer[i][1] * vibrationBuffer[i][1];
       sumOfSquares += vibrationBuffer[i][2] * vibrationBuffer[i][2];
     }
-    vibrationRMS = sqrt(sumOfSquares / (VIBRATION_SAMPLES * 3));
+    vibrationRMS = sqrt(sumOfSquares / (VIBRATION_SAMPLES * 3)) - 0.6;
   } else {
     a.acceleration.x = 0;
     a.acceleration.y = 0;

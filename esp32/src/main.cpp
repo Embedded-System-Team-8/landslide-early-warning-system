@@ -43,44 +43,37 @@ void setup() {
 }
 
 void loop() {
+  // Sensor data reading and processing
   sensors_event_t a, g, temp;
   float rainValue;
   float soilMoistureValue;
   float angleX, angleY;
-  String riskLevel;
-  bool alertTrigger;
-  
   readAllSensorsData(rainValue, soilMoistureValue, a, g, temp);
   
   // Calculate tilt angles in degrees
   angleX = atan2(a.acceleration.x, sqrt(a.acceleration.y * a.acceleration.y + a.acceleration.z * a.acceleration.z)) * 180.0 / PI;
   angleY = atan2(a.acceleration.y, sqrt(a.acceleration.x * a.acceleration.x + a.acceleration.z * a.acceleration.z)) * 180.0 / PI;
-  sendDataToFirebase(a, g, temp, angleX, angleY, soilMoistureValue, rainValue, riskLevel, alertTrigger);
+  
+  // Determine risk level and alert trigger
+  String riskLevel;
+  bool alertTrigger;
+  determineRiskLevel(angleX, angleY, soilMoistureValue, rainValue, riskLevel, alertTrigger);
   
   // Cycle through different sensor data on LCD
   static unsigned long lastDisplayToggle = 0;
+  static unsigned long lastFirebaseUpload = 0;
   static int displayState = 0;
+  unsigned int mil = millis();
   
-  if (millis() - lastDisplayToggle > 3000) { // Update every 3 seconds
-    lastDisplayToggle = millis();
-    displayState = (displayState + 1) % 3;
-    String status = "Sensor Data\n";    
-    switch(displayState) {
-      case 0:
-      status += "Tilt: X:%.1f Y:%.1f", angleX, angleY;
-      break;
-      case 1:
-      status += "Rain:%.1f%%", rainValue*100;
-      break;
-      case 2:
-      status += "Soil:%.1f%%", soilMoistureValue*100;
-      break;
-    }
-    writeLCD(status);
+  // setiap 0.2 detik
+  if (mil - lastFirebaseUpload > 180) {
+    sendDataToFirebase(a, g, temp, angleX, angleY, soilMoistureValue, rainValue, riskLevel, alertTrigger);
   }
 
   // Check for new Telegram messages
-  checkNewMessages();
+  // DISABLED: Telegram sending from backend
+  // checkNewMessages(&riskLevel, alertTrigger);
+  // sendSubscriptionStatusIfNeeded();
   
-  delay(200); // Sample frequently for better vibration detection
+  delay(50); // Sample frequently for better vibration detection
 }
