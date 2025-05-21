@@ -53,6 +53,14 @@ const Dashboard: React.FC = () => {
         <div className="p-2 sm:p-4 space-y-6">
             <h1 className="text-lg font-semibold">Dashboard Monitoring</h1>
 
+            <StatusCard
+                title="Risiko Longsor"
+                value={sensorData?.status.landslideRisk ?? " - "}
+                change={0}
+                status={sensorData?.status.landslideRisk as StatusType}
+                icon={<AlertTriangle size={24} />}
+            />
+
             <div className="flex flex-col gap-4 w-full">
                 <Card className="w-full">
                     <CardContent className="p-2">
@@ -75,7 +83,7 @@ const Dashboard: React.FC = () => {
                     </div>
 
                     {/* Summary Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <StatusCard
                             title="Kelembaban Tanah"
                             value={sensorData?.sensors.soilMoisture * 100}
@@ -99,13 +107,6 @@ const Dashboard: React.FC = () => {
                             change={0}
                             status="safe"
                             icon={<Thermometer size={24} />}
-                        />
-                        <StatusCard
-                            title="Risiko Longsor"
-                            value={sensorData?.status.landslideRisk ?? " - "}
-                            change={0}
-                            status={sensorData?.status.landslideRisk as StatusType}
-                            icon={<AlertTriangle size={24} />}
                         />
                     </div>
 

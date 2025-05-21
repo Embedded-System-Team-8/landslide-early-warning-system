@@ -37,9 +37,9 @@ export const Seismogram: React.FC = () => {
             const newDataPoint: ChartData = {
                 time: formatTime(now),
                 timestamp: currentTimestamp,
-                x: sensorData.sensors.accelerometer.x,
-                y: sensorData.sensors.accelerometer.y,
-                z: sensorData.sensors.accelerometer.z,
+                x: sensorData.sensors.tilt.angleX,
+                y: sensorData.sensors.tilt.angleY,
+                z: sensorData.sensors.tilt.maxTilt,
             }
             const newGyroPoint: ChartData = {
                 time: formatTime(now),
@@ -88,68 +88,6 @@ export const Seismogram: React.FC = () => {
         <div className="p-2 sm:p-4 w-full flex flex-col gap-8">
             {/* Row 1: Graphs side by side */}
             <div className="flex flex-col lg:flex-row gap-4">
-                <div className="flex-1 h-64 mb-2 min-w-0">
-                    <h2 className="text-sm font-semibold mb-4 text-center">Accelerometer</h2>
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={chartData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis
-                                dataKey="timestamp"
-                                type="number"
-                                domain={domain}
-                                allowDataOverflow
-                                tickFormatter={(timestamp) => {
-                                    const date = new Date(timestamp)
-                                    return date.toLocaleTimeString("id-ID", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                        second: "2-digit",
-                                        hour12: false,
-                                    })
-                                }}
-                                angle={-60}
-                                interval="preserveStartEnd"
-                                minTickGap={50}
-                                scale="time"
-                            />
-                            <YAxis />
-                            <Tooltip
-                                labelFormatter={(timestamp) =>
-                                    `Waktu: ${new Date(timestamp).toLocaleTimeString("id-ID")}`
-                                }
-                                formatter={(value: number, name: string) => [`${value.toFixed(2)} m/s`, name]}
-                            />
-                            <Legend />
-                            <Line
-                                type="monotone"
-                                dataKey="x"
-                                stroke="#ef4444"
-                                name="Sumbu X"
-                                dot={false}
-                                isAnimationActive={false}
-                                connectNulls
-                            />
-                            <Line
-                                type="monotone"
-                                dataKey="y"
-                                stroke="#22c55e"
-                                name="Sumbu Y"
-                                dot={false}
-                                isAnimationActive={false}
-                                connectNulls
-                            />
-                            <Line
-                                type="monotone"
-                                dataKey="z"
-                                stroke="#3b82f6"
-                                name="Sumbu Z"
-                                dot={false}
-                                isAnimationActive={false}
-                                connectNulls
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
                 <div className="flex-1 h-64 mb-2 min-w-0">
                     <h2 className="text-sm font-semibold mb-4 text-center">Gyroscope</h2>
                     <ResponsiveContainer width="100%" height="100%">
@@ -212,6 +150,59 @@ export const Seismogram: React.FC = () => {
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
+                <div className="flex-1 h-64 mb-2 min-w-0">
+                    <h2 className="text-sm font-semibold mb-4 text-center">Tilt</h2>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={chartData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis
+                                dataKey="timestamp"
+                                type="number"
+                                domain={domain}
+                                allowDataOverflow
+                                tickFormatter={(timestamp) => {
+                                    const date = new Date(timestamp)
+                                    return date.toLocaleTimeString("id-ID", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: false,
+                                    })
+                                }}
+                                angle={-60}
+                                interval="preserveStartEnd"
+                                minTickGap={50}
+                                scale="time"
+                            />
+                            <YAxis />
+                            <Tooltip
+                                labelFormatter={(timestamp) =>
+                                    `Waktu: ${new Date(timestamp).toLocaleTimeString("id-ID")}`
+                                }
+                                formatter={(value: number, name: string) => [`${value.toFixed(2)} °/s`, name]}
+                            />
+                            <Legend />
+                            <Line
+                                type="monotone"
+                                dataKey="x"
+                                stroke="#ef4444"
+                                name="Sudut X"
+                                dot={false}
+                                isAnimationActive={false}
+                                connectNulls
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="y"
+                                stroke="#22c55e"
+                                name="sudut Y"
+                                dot={false}
+                                isAnimationActive={false}
+                                connectNulls
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
 
             {/* Row 2: Details/cards side by side */}
@@ -230,9 +221,10 @@ export const Seismogram: React.FC = () => {
                 </div>
                 <div className="flex-1 w-full md:w-64 p-4 border rounded">
                     <h3 className="font-semibold mb-2">Tilt</h3>
-                    <p>X: {sensorData.sensors.tilt.x.toFixed(2)} deg/s</p>
-                    <p>Y: {sensorData.sensors.tilt.y.toFixed(2)} deg/s</p>
-                    <p>Z: {sensorData.sensors.tilt.z.toFixed(2)} deg/s</p>
+                    <p>X: {sensorData.sensors.tilt.angleX.toFixed(2)} deg/s</p>
+                    <p>Y: {sensorData.sensors.tilt.angleY.toFixed(2)} deg/s</p>
+                    <p className="mt-4">Max Tilt: {sensorData.sensors.tilt.maxTilt.toFixed(2)} deg/s</p>
+                    <p>Vibration RMS: {sensorData.sensors.tilt.maxTilt.toFixed(2)} deg/s</p>
                 </div>
             </div>
         </div>

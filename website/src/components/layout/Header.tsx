@@ -53,7 +53,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
                         <DropdownMenuLabel>Notifikasi</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <div className="max-h-80 overflow-auto">
-                            <DropdownMenuItem className="cursor-pointer">
+                            {/* <DropdownMenuItem className="cursor-pointer">
                                 <div className="flex items-start gap-2">
                                     <div className="status-indicator status-danger mt-1"></div>
                                     <div>
@@ -76,7 +76,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
                                         <p className="text-xs text-muted-foreground">20 menit yang lalu</p>
                                     </div>
                                 </div>
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                         </div>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="cursor-pointer justify-center text-primary">

@@ -3,12 +3,21 @@ from firebase_config import rtdb, firestore_db
 from telegram_bot import TelegramBot
 from datetime import datetime
 import threading
+import signal
+import sys
 
 class DataHandler:
     def __init__(self):
         self.telegram_bot = TelegramBot()
         self.samples = []
         self.max_samples = 100
+        
+    def stop(self):
+        """Stop the data handler"""
+        self.running = False
+        # Store any remaining samples
+        if self.samples:
+            self.store_in_firestore()
 
     def store_in_firestore(self):
         if not self.samples:
@@ -21,7 +30,7 @@ class DataHandler:
             doc_ref = collection.document()
             batch.set(doc_ref, {
                 **sample,
-                'timestamp': datetime.now()
+                # 'timestamp': datetime.now()
             })
             
         batch.commit()
@@ -31,7 +40,9 @@ class DataHandler:
     def handle_realtime_data(self, event):
         """Handle new data from Realtime Database"""
         if event.data:
-            print(f"Tilt:{event.data['sensors']['tilt']} | Gyro:{event.data['sensors']['gyro']} | Acc:{event.data['sensors']['accelerometer']}")
+            print(f"STATUS:{event.data['status']['alertTriggered']} | Tilt:{event.data['sensors']['tilt']} | Gyro:{event.data['sensors']['gyro']} | Acc:{event.data['sensors']['accelerometer']}")
+            
+            event.data['timestamp'] = datetime.now()
             
             # Store data for batch processing
             self.samples.append(event.data)
@@ -40,9 +51,7 @@ class DataHandler:
             if len(self.samples) >= self.max_samples:
                 self.store_in_firestore()
             
-            # Send alert if needed
-            if event.data['status']['alertTriggered']:
-                self.telegram_bot.send_alert(event.data)
+            self.telegram_bot.handleChat(event.data)
 
     def start_listening(self):
         """Start listening to Firebase Realtime Database"""
@@ -51,13 +60,29 @@ class DataHandler:
 def main():
     handler = DataHandler()
     
-    # Start Telegram bot in a separate thread
-    bot_thread = threading.Thread(target=handler.telegram_bot.start_polling)
-    bot_thread.daemon = True
-    bot_thread.start()
+    def signal_handler(sig, frame):
+        print('\nGracefully shutting down...')
+        handler.stop()  # Stop the data handler
+        handler.telegram_bot.stop()  # Add stop method to TelegramBot class
+        print('Program terminated.')
+        sys.exit(0)
     
-    print("Starting data collection...")
-    handler.start_listening()
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
+    try:
+        # Start Telegram bot in a separate thread
+        bot_thread = threading.Thread(target=handler.telegram_bot.start_polling)
+        bot_thread.daemon = True
+        bot_thread.start()
+        
+        print("Starting data collection... (Press Ctrl+C to exit)")
+        handler.start_listening()
+    except KeyboardInterrupt:
+        signal_handler(signal.SIGINT, None)
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        signal_handler(signal.SIGINT, None)
 
 if __name__ == "__main__":
     main()

@@ -10,6 +10,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import SeismographView from "./components/sensors/SeismographView";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import HistoryView from "./history/HistoryView";
 
 const queryClient = new QueryClient();
 
@@ -39,9 +40,7 @@ const App = () => (
           } />
           <Route path="/riwayat" element={
             <MainLayout>
-              <div className="p-8 text-center text-muted-foreground">
-                Riwayat Data akan ditampilkan di sini
-              </div>
+              <HistoryView />
             </MainLayout>
           } />
           <Route path="/notifikasi" element={

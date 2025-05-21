@@ -13,7 +13,7 @@ const firebaseConfig = {
 }
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig)
+export const app = initializeApp(firebaseConfig)
 export const database = getDatabase(app)
 
 // Tipe data untuk sensor
@@ -30,9 +30,9 @@ export interface SensorData {
             z: number
         }
         tilt: {
-            x: number
-            y: number
-            z: number
+            angleX: number
+            angleY: number
+            maxTilt: number
         }
         soilMoisture: number
         rainfall: number
