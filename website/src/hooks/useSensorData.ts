@@ -1,23 +1,21 @@
 import { useState, useEffect } from "react"
-import { onSnapshot, query, collection, orderBy, limit } from "firebase/firestore"
-import { getFirestore } from "firebase/firestore"
-import { app } from "../lib/firebase"
-import { SensorData, COLLECTIONS } from "../lib/firestore"
+import { ref, onValue } from "firebase/database"
+import { database, SensorData } from "../lib/firebase"
 
-export function useSensorData(limitCount: number = 1) {
+export function useSensorData() {
     const [sensorData, setSensorData] = useState<SensorData | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        const db = getFirestore(app)
-        const q = query(collection(db, COLLECTIONS.SENSOR_HISTORY), orderBy("timestamp", "desc"), limit(limitCount))
+        const sensorRef = ref(database, `/`)
 
-        const unsubscribe = onSnapshot(
-            q,
+        const unsubscribe = onValue(
+            sensorRef,
             (snapshot) => {
-                if (!snapshot.empty) {
-                    const data = snapshot.docs[0].data() as SensorData
+                const data = snapshot.val()
+
+                if (data) {
                     setSensorData(data)
                 } else {
                     setError("Data tidak ditemukan")
@@ -31,7 +29,7 @@ export function useSensorData(limitCount: number = 1) {
         )
 
         return () => unsubscribe()
-    }, [limitCount])
+    }, [])
 
     return { sensorData, loading, error }
 }

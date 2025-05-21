@@ -21,6 +21,8 @@ export const Seismogram: React.FC = () => {
 
     useEffect(() => {
         if (sensorData) {
+            console.log("Sensor data:", sensorData)
+
             const now = new Date()
             const currentTimestamp = now.getTime()
 

@@ -25,13 +25,6 @@ export const COLLECTIONS = {
 } as const
 
 export class FirestoreUtils {
-    /**
-     * Create a new document in a collection
-     * @param collectionName Collection name
-     * @param data Document data
-     * @param documentId Optional document ID
-     * @returns Document ID of the created document
-     */
     static async createDocument<T extends DocumentData>(
         collectionName: string,
         data: T,
@@ -53,12 +46,6 @@ export class FirestoreUtils {
         }
     }
 
-    /**
-     * Read a document from a collection
-     * @param collectionName Collection name
-     * @param documentId Document ID to read
-     * @returns Document data
-     */
     static async readDocument<T extends DocumentData>(collectionName: string, documentId: string): Promise<T | null> {
         try {
             const docRef = doc(db, collectionName, documentId)
@@ -74,12 +61,6 @@ export class FirestoreUtils {
         }
     }
 
-    /**
-     * Update an existing document
-     * @param collectionName Collection name
-     * @param documentId Document ID to update
-     * @param data Fields to update
-     */
     static async updateDocument<T extends DocumentData>(
         collectionName: string,
         documentId: string,
@@ -94,11 +75,6 @@ export class FirestoreUtils {
         }
     }
 
-    /**
-     * Delete a document from a collection
-     * @param collectionName Collection name
-     * @param documentId Document ID to delete
-     */
     static async deleteDocument(collectionName: string, documentId: string): Promise<void> {
         try {
             const docRef = doc(db, collectionName, documentId)
@@ -109,13 +85,6 @@ export class FirestoreUtils {
         }
     }
 
-    /**
-     * Get the latest documents from a collection
-     * @param collectionName Collection name
-     * @param limitCount Maximum number of documents to retrieve
-     * @param orderByField Field to order by
-     * @returns Array of documents
-     */
     static async getLatestDocuments<T extends DocumentData>(
         collectionName: string,
         limitCount: number = 10,
@@ -132,11 +101,6 @@ export class FirestoreUtils {
         }
     }
 
-    /**
-     * Get the total number of documents in a collection
-     * @param collectionName Collection name
-     * @returns Number of documents
-     */
     static async getCollectionCount(collectionName: string): Promise<number> {
         try {
             const querySnapshot = await getDocs(collection(db, collectionName))

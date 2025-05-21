@@ -108,14 +108,14 @@ export default function HistoryView() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Timestamp</TableHead>
-                            <TableHead>Risk Level</TableHead>
-                            <TableHead>Soil Moisture</TableHead>
-                            <TableHead>Rainfall</TableHead>
-                            <TableHead>Temperature</TableHead>
-                            <TableHead>Tilt X°</TableHead>
-                            <TableHead>Tilt Y°</TableHead>
-                            <TableHead>Alert</TableHead>
+                            <TableHead>Waktu</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Kelembapan Tanah</TableHead>
+                            <TableHead>Intensitas Hujan</TableHead>
+                            <TableHead>Temperatur</TableHead>
+                            <TableHead>Kemiringan X°</TableHead>
+                            <TableHead>Kemiringan Y°</TableHead>
+                            <TableHead>Peringatan</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -126,7 +126,7 @@ export default function HistoryView() {
                                     </TableCell>
                                 <TableCell className="py-2">{data.status.landslideRisk}</TableCell>
                                 <TableCell className="py-2">{data.sensors.soilMoisture.toFixed(2)}%</TableCell>
-                                <TableCell className="py-2">{data.sensors.rainfall.toFixed(2)} mm</TableCell>
+                                <TableCell className="py-2">{data.sensors.rainfall.toFixed(2)} %</TableCell>
                                 <TableCell className="py-2">{data.sensors.temperature.toFixed(1)}°C</TableCell>
                                 <TableCell className="py-2">{data.sensors.tilt.angleX.toFixed(1)}°</TableCell>
                                 <TableCell className="py-2">{data.sensors.tilt.angleY.toFixed(1)}°</TableCell>

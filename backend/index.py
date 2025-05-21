@@ -11,6 +11,8 @@ class DataHandler:
         self.telegram_bot = TelegramBot()
         self.samples = []
         self.max_samples = 100
+        self.enableFirebase = True
+        self.enableTelegram = True
         
     def stop(self):
         """Stop the data handler"""
@@ -43,15 +45,13 @@ class DataHandler:
             print(f"STATUS:{event.data['status']['alertTriggered']} | Tilt:{event.data['sensors']['tilt']} | Gyro:{event.data['sensors']['gyro']} | Acc:{event.data['sensors']['accelerometer']}")
             
             event.data['timestamp'] = datetime.now()
-            
-            # Store data for batch processing
-            self.samples.append(event.data)
-            
-            # Check if we need to store in Firestore
-            if len(self.samples) >= self.max_samples:
-                self.store_in_firestore()
-            
-            self.telegram_bot.handleChat(event.data)
+
+            if self.enableFirebase:            
+                self.samples.append(event.data)
+                if len(self.samples) >= self.max_samples:
+                    self.store_in_firestore()
+                if (self.enableTelegram):
+                    self.telegram_bot.handleChat(event.data)
 
     def start_listening(self):
         """Start listening to Firebase Realtime Database"""
