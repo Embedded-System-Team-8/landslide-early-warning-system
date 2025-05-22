@@ -1,1 +1,1 @@
-cd backend && venv\Scripts\activate && python index.py
+cd backend && .venv\Scripts\activate && python index.py
