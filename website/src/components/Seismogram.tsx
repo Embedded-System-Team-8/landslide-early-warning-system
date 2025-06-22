@@ -16,7 +16,9 @@ export const Seismogram: React.FC = () => {
     const [chartData, setChartData] = useState<ChartData[]>([])
     const [domain, setDomain] = useState<[number, number]>([0, 0])
     const [chartDataGyro, setChartDataGyro] = useState<ChartData[]>([])
+    const [chartDataAccel, setChartDataAccel] = useState<ChartData[]>([])
     const [domainGyro, setDomainGyro] = useState<[number, number]>([0, 0])
+    const [domainAccel, setDomainAccel] = useState<[number, number]>([0, 0])
     const initialRenderRef = useRef(true)
 
     useEffect(() => {
@@ -50,6 +52,13 @@ export const Seismogram: React.FC = () => {
                 y: sensorData.sensors.gyro.y,
                 z: sensorData.sensors.gyro.z,
             }
+            const newAccPoint: ChartData = {
+                time: formatTime(now),
+                timestamp: currentTimestamp,
+                x: sensorData.sensors.accelerometer.x,
+                y: sensorData.sensors.accelerometer.y,
+                z: sensorData.sensors.accelerometer.z,
+            }
 
             setChartData((prevData) => {
                 let updatedData = [...prevData, newDataPoint]
@@ -73,6 +82,16 @@ export const Seismogram: React.FC = () => {
                 }
                 return updatedData
             })
+            setChartDataAccel((prevData) => {
+                let updatedData = [...prevData, newAccPoint]
+                updatedData = updatedData.slice(-100)
+                if (updatedData.length > 0) {
+                    const oldest = updatedData[0].timestamp
+                    const newest = updatedData[updatedData.length - 1].timestamp
+                    setDomainAccel([oldest, newest])
+                }
+                return updatedData
+            })
         }
     }, [sensorData])
 
@@ -90,6 +109,68 @@ export const Seismogram: React.FC = () => {
         <div className="p-2 sm:p-4 w-full flex flex-col gap-8">
             {/* Row 1: Graphs side by side */}
             <div className="flex flex-col lg:flex-row gap-4">
+                <div className="flex-1 h-64 mb-2 min-w-0">
+                    <h2 className="text-sm font-semibold mb-4 text-center">Accelerometer</h2>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={chartDataAccel}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis
+                                dataKey="timestamp"
+                                type="number"
+                                domain={domainAccel}
+                                allowDataOverflow
+                                tickFormatter={(timestamp) => {
+                                    const date = new Date(timestamp)
+                                    return date.toLocaleTimeString("id-ID", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: false,
+                                    })
+                                }}
+                                angle={-60}
+                                interval="preserveStartEnd"
+                                minTickGap={50}
+                                scale="time"
+                            />
+                            <YAxis />
+                            <Tooltip
+                                labelFormatter={(timestamp) =>
+                                    `Waktu: ${new Date(timestamp).toLocaleTimeString("id-ID")}`
+                                }
+                                formatter={(value: number, name: string) => [`${value.toFixed(2)} rad/s`, name]}
+                            />
+                            <Legend />
+                            <Line
+                                type="monotone"
+                                dataKey="x"
+                                stroke="#ef4444"
+                                name="Sumbu X"
+                                dot={false}
+                                isAnimationActive={false}
+                                connectNulls
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="y"
+                                stroke="#22c55e"
+                                name="Sumbu Y"
+                                dot={false}
+                                isAnimationActive={false}
+                                connectNulls
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="z"
+                                stroke="#3b82f6"
+                                name="Sumbu Z"
+                                dot={false}
+                                isAnimationActive={false}
+                                connectNulls
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
                 <div className="flex-1 h-64 mb-2 min-w-0">
                     <h2 className="text-sm font-semibold mb-4 text-center">Gyroscope</h2>
                     <ResponsiveContainer width="100%" height="100%">
@@ -152,6 +233,7 @@ export const Seismogram: React.FC = () => {
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
+                
                 <div className="flex-1 h-64 mb-2 min-w-0">
                     <h2 className="text-sm font-semibold mb-4 text-center">Tilt</h2>
                     <ResponsiveContainer width="100%" height="100%">
