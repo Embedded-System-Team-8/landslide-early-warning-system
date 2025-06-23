@@ -3,11 +3,15 @@ from telegram.ext import Updater, CommandHandler, CallbackContext
 from telegram import Update
 import json
 from datetime import datetime
+import os
+from dotenv import load_dotenv
 
-# Telegram configuration
-# TELEGRAM_TOKEN = "7010887758:AAH_b92VXTQH8HTK9RauHs8KXESR4zXWURA" # t.me/landslidewarningteam8bot
-TELEGRAM_TOKEN = "7904979023:AAGrbQrstVZaAMD9i1BXcOTFyAr9K_HRwuE"
-CHAT_ID = "5441057589"
+# Load environment variables
+load_dotenv()
+
+# Telegram configuration from environment variables
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 class TelegramBot:
     def __init__(self):

@@ -1,16 +1,21 @@
 import firebase_admin
 from firebase_admin import credentials, db, firestore
+import os
+from dotenv import load_dotenv
 
-# Firebase configuration
+# Load environment variables
+load_dotenv()
+
+# Firebase configuration from environment variables
 firebase_config = {
-    "apiKey": "AIzaSyDWh86oJpll6WLrDZB2lPqIaRy83GZGkMs",
-    "authDomain": "landslide-system-b8dd4.firebaseapp.com",
-    "databaseURL": "https://landslide-system-b8dd4-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "projectId": "landslide-system-b8dd4",
-    "storageBucket": "landslide-system-b8dd4.firebasestorage.app",
-    "messagingSenderId": "145586828202",
-    "appId": "1:145586828202:web:b7e9fcf6de11a71d0431d3",
-    "measurementId": "G-8L91HNRPKJ",
+    "apiKey": os.getenv("FIREBASE_API_KEY"),
+    "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN"),
+    "databaseURL": os.getenv("FIREBASE_DATABASE_URL"),
+    "projectId": os.getenv("FIREBASE_PROJECT_ID"),
+    "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET"),
+    "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID"),
+    "appId": os.getenv("FIREBASE_APP_ID"),
+    "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID"),
 }
 
 # Initialize Firebase Admin

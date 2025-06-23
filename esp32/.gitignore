@@ -3,3 +3,7 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
+
+# ESP32 Credentials Configuration
+config.h
+secrets.h

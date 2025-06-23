@@ -2,14 +2,15 @@
 #include <FirebaseESP32.h>
 #include <Arduino.h>
 #include "sensors.h"
+#include "config.h"
 
 FirebaseData firebaseData;
 FirebaseConfig config;
 FirebaseAuth auth;
 
 void setupFirebase() {
-  config.host = "https://landslide-system-b8dd4-default-rtdb.asia-southeast1.firebasedatabase.app";
-  config.signer.tokens.legacy_token = "AIzaSyDWh86oJpll6WLrDZB2lPqIaRy83GZGkMs";
+  config.host = FIREBASE_HOST;
+  config.signer.tokens.legacy_token = FIREBASE_AUTH;
   Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);
 }

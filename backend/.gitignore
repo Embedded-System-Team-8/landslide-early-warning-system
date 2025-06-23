@@ -179,3 +179,11 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Service account key
+serviceAccountKey.json

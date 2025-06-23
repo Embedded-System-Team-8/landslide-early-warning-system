@@ -3,9 +3,10 @@
 #include <WiFiClientSecure.h>
 #include <UniversalTelegramBot.h>
 #include "sensors.h"
+#include "config.h"
 
-const char* botToken = "7904979023:AAGrbQrstVZaAMD9i1BXcOTFyAr9K_HRwuE"; // ganti dengan token bot kamu
-const char* chatId = "1388016195"; // ganti dengan chat ID kamu
+const char* botToken = TELEGRAM_BOT_TOKEN;
+const char* chatId = TELEGRAM_CHAT_ID;
 
 WiFiClientSecure secured_client;
 UniversalTelegramBot bot(botToken, secured_client);

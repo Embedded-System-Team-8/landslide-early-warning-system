@@ -1,0 +1,19 @@
+// ESP32 Environment Configuration Template
+// Copy this file to config.h and update the values according to your setup
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+// WiFi Configuration
+const char* WIFI_SSID = "YOUR_WIFI_SSID";         // Replace with your WiFi network name
+const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD"; // Replace with your WiFi password
+
+// Firebase Configuration
+const char* FIREBASE_HOST = "https://your-project-default-rtdb.region.firebasedatabase.app"; // Replace with your Firebase database URL
+const char* FIREBASE_AUTH = "your_firebase_auth_token"; // Replace with your Firebase auth token
+
+// Telegram Configuration
+const char* TELEGRAM_BOT_TOKEN = "your_telegram_bot_token"; // Replace with your Telegram bot token
+const char* TELEGRAM_CHAT_ID = "your_telegram_chat_id";     // Replace with your Telegram chat ID
+
+#endif
