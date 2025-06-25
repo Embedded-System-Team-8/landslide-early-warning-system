@@ -2,13 +2,7 @@
 
 <div align="center">
 
-**Languages:** [🇺🇸 English](README.md) | [🇮🇩 Bahasa Indonesia](README_id.md)
-
-</div>
-
-<div align="center">
-
-![Landslide Warning System Banner](https://via.placeholder.com/800x200/2563eb/ffffff?text=Landslide+Early+Warning+System)
+![Landslide Warning System Banner](banner.webp)
 
 **An IoT-based early warning system to detect and predict landslide risks using advanced sensor monitoring and real-time data analysis.**
 
@@ -19,7 +13,7 @@
 
 </div>
 
-## 📖 Description
+## Description
 
 The Landslide Early Warning System is a comprehensive IoT solution designed to monitor environmental conditions that could lead to landslides. The system uses multiple sensors to collect real-time data on ground vibration, soil moisture, and rainfall levels. This data is processed using advanced algorithms to assess landslide risk and automatically alert authorities and residents through multiple communication channels.
 
@@ -31,11 +25,9 @@ The Landslide Early Warning System is a comprehensive IoT solution designed to m
 -   ⚡ **Multi-sensor Integration**: MPU6050 accelerometer/gyroscope, SW-420 vibration sensor, soil moisture, and rain sensors
 -   🌐 **Web Dashboard**: Modern React-based interface for data visualization
 -   📱 **Telegram Alerts**: Instant notifications for emergency situations
--   📊 **Data Analytics**: Historical data storage and trend analysis
--   🤖 **Machine Learning**: Intelligent risk assessment algorithms
 -   🔔 **Multi-level Alerts**: Aman (Safe), Awas (Watch), Waspada (Alert) status levels
 
-## 🛠️ Hardware Requirements
+## Hardware Requirements
 
 ### Essential Components
 
@@ -50,16 +42,6 @@ The Landslide Early Warning System is a comprehensive IoT solution designed to m
 | **LCD Display**             | 16x2 I2C LCD          | 1        | Local status display             |
 | **Servo Motors**            | SG90                  | 2        | Alert mechanism actuators        |
 | **Buzzer**                  | Active buzzer         | 1        | Audio alarm                      |
-
-### Recommended Expansion Components
-
-| Component                  | Model/Type     | Purpose                  |
-| -------------------------- | -------------- | ------------------------ |
-| **GSM Module**             | SIM800L        | SMS alerts backup        |
-| **Solar Panel**            | 5V Solar Panel | Power backup             |
-| **Battery**                | 18650 Li-ion   | Uninterrupted operation  |
-| **Weatherproof Enclosure** | IP65 rated     | Outdoor protection       |
-| **Temperature Sensor**     | DS18B20        | Environmental monitoring |
 
 ### Wiring Connections
 
@@ -108,7 +90,7 @@ ESP32 Pin Layout (using Expansion Board):
 -   **Firebase Firestore**: Historical data storage
 -   **Telegram Bot API**: Alert notifications
 
-## 🔧 Hardware Installation
+## Hardware Installation
 
 ### 1. Circuit Assembly
 
@@ -135,14 +117,7 @@ ESP32 Pin Layout (using Expansion Board):
 3. **MPU6050**: Ensure flat, stable mounting for accurate readings
 4. **SW-420**: Test vibration sensitivity and adjust potentiometer if needed
 
-### 3. Enclosure Setup
-
-1. Mount all components in weatherproof enclosure
-2. Ensure sensors are accessible to environmental conditions
-3. Provide adequate ventilation for electronics
-4. Secure all connections to prevent moisture ingress
-
-## 💾 Software Installation
+## Software Installation
 
 ### 1. Clone Repository
 
@@ -257,7 +232,7 @@ start_frontend.bat
 2. Get bot token and update `backend/telegram_bot.py`
 3. Add authorized chat IDs for alert recipients
 
-## 🚀 Usage
+## Usage
 
 ### System Startup
 
@@ -299,7 +274,7 @@ python simulate_data.py --risk waspada --mode continuous --duration 300
 | **122140137** | **Ikhsannudin Lathief**        | Firmware Developer                |
 | **122140189** | **Muhammad Ghiffari Iskandar** | Firmware Developer                |
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 landslide-early-warning-system/
@@ -324,7 +299,7 @@ landslide-early-warning-system/
 └── README.md
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables Setup
 
@@ -435,38 +410,11 @@ Modify thresholds in `esp32/src/logic.cpp`:
 #define RAIN_THRESHOLD 500
 ```
 
-## 📊 API Documentation
-
-### ESP32 Endpoints
-
--   **Real-time Data**: Firebase Realtime Database path `/sensor_data`
--   **Historical Data**: Firestore collection `sensor_history`
--   **Alert Status**: Firebase path `/alert_status`
-
-### Data Format
-
-```json
-{
-    "timestamp": "2025-06-22T10:30:00Z",
-    "sensors": {
-        "vibration": 0.3,
-        "soil_moisture": 45.2,
-        "rain": 123.4,
-        "temperature": 25.6
-    },
-    "risk_level": "aman",
-    "location": {
-        "latitude": -6.2088,
-        "longitude": 106.8456
-    }
-}
-```
-
-## 📜 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 -   Thanks to the Arduino and ESP32 community for excellent documentation
 -   Firebase team for robust cloud infrastructure
